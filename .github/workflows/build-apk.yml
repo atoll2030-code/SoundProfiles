@@ -18,13 +18,21 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      
       - name: Install Android SDK components
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          sdkmanager --install \
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            echo "Android SDK Manager not found"
+            find "$ANDROID_HOME/cmdline-tools" -name sdkmanager
+            exit 1
+          fi
+
+          "$SDKMANAGER" --install \
             "platforms;android-35" \
             "build-tools;35.0.0" \
             "platform-tools"
+
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
